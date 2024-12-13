@@ -1,88 +1,117 @@
 const startButton = document.querySelector('.start-btn');
+const stopButton = document.querySelector('.stop-btn');
 const displayTime = document.querySelector('.time');
-let totalSeconds = 10;
-let decaHours = 0;
-let hours = 0;
-let decaMinutes = 0;
-let minutes = 0;
-let decaSeconds = 0;
-let seconds = 0;
+const hour = document.querySelector('.hour');
+const minute = document.querySelector('.minute');
+const second = document.querySelector('.second');
+let interval;
+let totalSeconds = 0;
+let hourValue = '';
+let minuteValue = '';
+let secondValue = '';
 let isCountingDown = false;
 
 timerInitialization();
 
-startButton.addEventListener('click', () => {
-  if (isCountingDown) return;
-  isCountingDown = true;
-  startButton.disabled = true;
-
-  displayTime.value = timeConverter(totalSeconds);
-  countDown();  
+hour.addEventListener('input', () => {
+  hour.value = hour.value.replace(/[^0-9]/g, '').slice(0, 2);
 });
 
-function timerInitialization() {
-  displayTime.value = '00:00';
+minute.addEventListener('input', () => {
+  minute.value = minute.value.replace(/[^0-9]/g, '').slice(0, 2);
+});
+
+second.addEventListener('input', () => {
+  second.value = second.value.replace(/[^0-9]/g, '').slice(0, 2);
+});
+
+startButton.addEventListener('click', () => {
+  buttonSwap();
+  fetchInput();
+  convertToTotalSeconds();
+  countDown();
+});
+
+stopButton.addEventListener('click', () => {
+  totalSeconds = 0;
+  timerInitialization();
+  clearInterval(interval);
+  buttonSwap();
+  alert('Timer has stopped!');
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && isCountingDown === false) {
+    fetchInput();
+    convertToTotalSeconds();
+    if (totalSeconds > 0) {
+      buttonSwap();
+      countDown();
+    }
+  };
+
+  if (e.key === 'Escape' && isCountingDown === true) {
+    isCountingDown = false;
+    totalSeconds = 0;
+    timerInitialization();
+    clearInterval(interval);
+    buttonSwap();
+    alert('Timer has stopped!');
+  }
+});
+
+function convertToTotalSeconds() {
+  totalSeconds = secondValue + (minuteValue * 60) + (hourValue * 3600);
 };
 
 function timeConverter(totalSeconds) {
-  if (totalSeconds < 10) {
-    decaSeconds = 0;
-    seconds = totalSeconds
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return {
+    hours: hours.toString().padStart(2, '0'),
+    minutes: minutes.toString().padStart(2, '0'),
+    seconds: seconds.toString().padStart(2, '0'),
   }
-  else if (totalSeconds < 60) {
-    minutes = 0;
-    decaSeconds = Math.floor(totalSeconds / 10);
-    seconds = totalSeconds - (decaSeconds * 10);
-  }
-  else if (totalSeconds < 600) {
-    decaMinutes = 0;
-    minutes = Math.floor(totalSeconds / 60);
-    decaSeconds = Math.floor((totalSeconds - minutes * 60) / 10);
-    seconds = totalSeconds - (minutes * 60) - (decaSeconds * 10);
-  }
-  else if (totalSeconds < 3600) {
-    hours = 0;
-    decaMinutes = Math.floor(totalSeconds / 600);
-    minutes = Math.floor((totalSeconds - decaMinutes * 600) / 60);
-    decaSeconds = Math.floor((totalSeconds - (decaMinutes * 600) - (minutes * 60)) / 10)
-    seconds = totalSeconds - (decaMinutes * 600) - (minutes * 60) - (decaSeconds * 10);
-  } 
-  else if (totalSeconds < 36000) {
-    decaHours = 0;
-    hours = Math.floor(totalSeconds / 3600);
-    decaMinutes = Math.floor((totalSeconds - hours * 3600) / 600);
-    minutes = Math.floor((totalSeconds - (hours * 3600) - (decaMinutes * 600)) / 60);
-    decaSeconds = Math.floor((totalSeconds - (hours * 3600) - (decaMinutes * 600) - (minutes * 60)) / 10);
-    seconds = totalSeconds - (hours * 3600) - (decaMinutes * 600) - (minutes * 60) - (decaSeconds * 10);
-  } 
-  else {
-    decaHours = Math.floor(totalSeconds / 36000);
-    hours = Math.floor((totalSeconds - decaHours * 36000) / 3600);
-    decaMinutes = Math.floor((totalSeconds - (decaHours * 36000) - (hours * 3600)) / 600);
-    minutes = Math.floor((totalSeconds - (decaHours * 36000) - (hours * 3600) - (decaMinutes * 600)) / 60);
-    decaSeconds = Math.floor((totalSeconds - (decaHours * 36000) - (hours * 3600) - (decaMinutes * 600) - (minutes * 60)) / 10);
-    seconds = totalSeconds - (decaHours * 36000) - (hours * 3600) - (decaMinutes * 600) - (minutes * 60) - (decaSeconds * 10);
-  }
-  
-  if (totalSeconds < 3600) {
-    return `${decaMinutes}` + `${minutes}` + ':' + `${decaSeconds}` + `${seconds}`;
-  } else {
-    return `${decaHours}` + `${hours}` + ':' + `${decaMinutes}` + `${minutes}` + ':' + `${decaSeconds}` + `${seconds}`;
-  }
-}
-
+};
 
 function countDown() {
-  const interval = setInterval(() => {
+  interval = setInterval(() => {
     if (totalSeconds === 0) {
-      clearInterval(interval);
+      hour.disabled = false;
+      minute.disabled = false;
+      second.disabled = false;
       isCountingDown = false;
-      startButton.disabled = false;
+      clearInterval(interval);
+      buttonSwap();
       alert('Timer has stopped!');
-    } else if (totalSeconds > 0) {
+    } else {
+      isCountingDown = true;
+      hour.disabled = true;
+      minute.disabled = true;
+      second.disabled = true;
       totalSeconds--;
       const currentTime = timeConverter(totalSeconds); 
-      displayTime.value = currentTime;
+      hour.value = currentTime.hours;
+      minute.value = currentTime.minutes;
+      second.value = currentTime.seconds;
     }
   }, 1000);
-}
+};
+
+function timerInitialization() {
+  hour.value = '00';
+  minute.value = '00';
+  second.value = '00';
+};
+
+function fetchInput() {
+  hourValue = parseInt(hour.value || 0, 10);
+  minuteValue = parseInt(minute.value || 0, 10);
+  secondValue = parseInt(second.value || 0, 10);
+};
+
+function buttonSwap() {
+  startButton.classList.toggle('hide');
+  stopButton.classList.toggle('hide');
+};

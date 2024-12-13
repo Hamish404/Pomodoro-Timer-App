@@ -13,12 +13,17 @@
   <div class="container">
     <div class="outer-circle">
       <div class="inner-circle">
-        <input class="time roboto-thin" type="number" inputmode="numeric" step="1" placeholder="00:00">
+        <input class="time roboto-thin hour" type="text">
+        <p class="time-separator">:</p>
+        <input class="time roboto-thin minute" type="text" maxlength="2">
+        <p class="time-separator">:</p>
+        <input class="time roboto-thin second" type="text" maxlength="2">
       </div>
     </div>
 </div>
 <div class="btn-container">
-  <button class="start-btn roboto-thin">START</button>
+  <button class="start-btn btn roboto-thin">START</button>
+  <button class="stop-btn btn hide roboto-thin">STOP</button>
 </div>
 <script src="/index.js"></script>
 </body>

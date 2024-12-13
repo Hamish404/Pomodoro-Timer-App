@@ -5,18 +5,19 @@
   border: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-.roboto-thin {
-  font-family: "Roboto", sans-serif;
-  font-weight: 200;
-  font-style: normal;
+  line-height: 1.5;
 }
 
 body {
   height: 100vh;
   width: 100vw;
   background: linear-gradient(120deg, #f5f5dc, #d1c6b1, #bfae8e);
+}
+
+.roboto-thin {
+  font-family: "Roboto", sans-serif;
+  font-weight: 200;
+  font-style: normal;
 }
 
 .container {
@@ -37,39 +38,32 @@ body {
 }
 
 .inner-circle {
-  display: grid;
-  place-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 95%;
   aspect-ratio: 1/1;
   border-radius: 50%;
   border: 1px solid black;
 }
 
-.time {
+.time, .time-separator {
   font-size: 8rem;
-  width: 80%;
   text-align: center;
+}
+
+.time {
+  width: 25%;
   background: transparent;
-  padding: 0;
-  margin: 0;
   outline: none;
-  appearance: none;
 }
 
 .time::placeholder {
   color: black;
 }
 
-input[type="number"] {
-  -moz-appearance: textfield;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+.time-separator {
+  padding-bottom: 3%;
 }
 
 .btn-container {
@@ -79,7 +73,7 @@ input[type="number"]::-webkit-outer-spin-button {
   align-items: center;
 }
 
-.start-btn {
+.btn {
   height: 40%;
   aspect-ratio: 3/1;
   border-radius: 4rem;
@@ -91,8 +85,12 @@ input[type="number"]::-webkit-outer-spin-button {
   transition: all 0.3s ease;
 }
 
-.start-btn:hover {
+.btn:hover {
   transform: scale(1.1);
+}
+
+.hide {
+  display: none;
 }
 
 
