@@ -4,6 +4,7 @@ const displayTime = document.querySelector('.time');
 const hour = document.querySelector('.hour');
 const minute = document.querySelector('.minute');
 const second = document.querySelector('.second');
+const timerAlert = new Audio('sounds/Timer-Jingle.mp3');
 let interval;
 let totalSeconds = 0;
 let hourValue = '';
@@ -37,7 +38,7 @@ stopButton.addEventListener('click', () => {
   timerInitialization();
   clearInterval(interval);
   buttonSwap();
-  alert('Timer has stopped!');
+  stopTimerAlert();
 });
 
 document.addEventListener('keydown', (e) => {
@@ -57,7 +58,12 @@ document.addEventListener('keydown', (e) => {
     clearInterval(interval);
     enableInput();
     buttonSwap();
-    alert('Timer has stopped!');
+    stopTimerAlert();
+  }
+
+  if (e.key === 'Escape' && isCountingDown === false) {
+    buttonSwap();
+    stopTimerAlert();
   }
 });
 
@@ -81,9 +87,8 @@ function countDown() {
     if (totalSeconds === 0) {
       isCountingDown = false;
       clearInterval(interval);
+      playTimerAlert();
       enableInput();
-      buttonSwap();
-      alert('Timer has stopped!');
     } else {
       isCountingDown = true;
       disableInput();
@@ -123,4 +128,13 @@ function disableInput() {
   hour.disabled = true;
   minute.disabled = true;
   second.disabled = true;
+}
+
+function playTimerAlert() {
+  timerAlert.play();
+}
+
+function stopTimerAlert() {
+  timerAlert.pause();
+  timerAlert.currentTime = 0;
 }
