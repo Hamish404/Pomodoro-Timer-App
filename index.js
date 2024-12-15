@@ -55,6 +55,7 @@ document.addEventListener('keydown', (e) => {
     totalSeconds = 0;
     timerInitialization();
     clearInterval(interval);
+    enableInput();
     buttonSwap();
     alert('Timer has stopped!');
   }
@@ -68,7 +69,7 @@ function timeConverter(totalSeconds) {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
-  return {
+  return { 
     hours: hours.toString().padStart(2, '0'),
     minutes: minutes.toString().padStart(2, '0'),
     seconds: seconds.toString().padStart(2, '0'),
@@ -78,18 +79,14 @@ function timeConverter(totalSeconds) {
 function countDown() {
   interval = setInterval(() => {
     if (totalSeconds === 0) {
-      hour.disabled = false;
-      minute.disabled = false;
-      second.disabled = false;
       isCountingDown = false;
       clearInterval(interval);
+      enableInput();
       buttonSwap();
       alert('Timer has stopped!');
     } else {
       isCountingDown = true;
-      hour.disabled = true;
-      minute.disabled = true;
-      second.disabled = true;
+      disableInput();
       totalSeconds--;
       const currentTime = timeConverter(totalSeconds); 
       hour.value = currentTime.hours;
@@ -115,3 +112,15 @@ function buttonSwap() {
   startButton.classList.toggle('hide');
   stopButton.classList.toggle('hide');
 };
+
+function enableInput() {
+  hour.disabled = false;
+  minute.disabled = false;
+  second.disabled = false;
+}
+
+function disableInput() {
+  hour.disabled = true;
+  minute.disabled = true;
+  second.disabled = true;
+}
