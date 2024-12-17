@@ -1,3 +1,13 @@
+@property --progress {
+  syntax: "<length-percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+:root {
+  --background-color: linear-gradient(120deg, #f5f5dc, #d1c6b1, #bfae8e);
+}
+
 *,
 *::before,
 *::after {
@@ -11,7 +21,7 @@
 body {
   height: 100vh;
   width: 100vw;
-  background: linear-gradient(120deg, #f5f5dc, #d1c6b1, #bfae8e);
+  background: var(--background-color);
 }
 
 .roboto-thin {
@@ -28,14 +38,52 @@ body {
   align-items: center;
 }
 
+.top-button {
+  position: absolute;
+  top: -5.9vh;
+  height: 3vh;
+  width: 7vh;
+  border: 2px solid black;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.top-button:hover {
+  transform: scale(1.1);
+}
+
+.knurling {
+  height: 3vh;
+  width: 0.1vh;
+  border: 1px solid black;
+}
+
+.stem {
+  position: absolute;
+  top: -3vh;
+  height: 3vh;
+  width: 2vh;
+  border: 1.5px solid black;
+}
+
 .outer-circle {
+  position: relative;
   display: grid;
   place-items: center;
-  height: 75%;
+  height: 55vh;
   aspect-ratio: 1/1;
   border-radius: 50%;
   border: 1px solid black;
-}
+  box-shadow: 1px 1px 1px 0 rgba(8, 8, 8);
+  background: conic-gradient(
+    #555 var(--progress, 0),
+    transparent 0%
+  );
+  transition: --progress 700ms ease-out;
+} 
 
 .inner-circle {
   display: flex;
@@ -45,6 +93,8 @@ body {
   aspect-ratio: 1/1;
   border-radius: 50%;
   border: 1px solid black;
+  box-shadow: inset -1px -1px 5px 0 rgba(8, 8, 8);
+  background: var(--background-color);
 }
 
 .time, .time-separator {
@@ -70,7 +120,7 @@ body {
   height: 25%;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .btn {
@@ -81,6 +131,7 @@ body {
   letter-spacing: 0.2rem;
   background: transparent;
   border: 1px solid black;
+  box-shadow: 1px 1px 2px 0 rgba(8, 8, 8);
   cursor: pointer;
   transition: all 0.3s ease;
 }

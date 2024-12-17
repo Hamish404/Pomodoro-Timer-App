@@ -1,3 +1,6 @@
+const topButtonStart = document.querySelector('.top-button-start');
+const topButtonPause = document.querySelector('.top-button-stop');
+const progressBar = document.querySelector('.outer-circle');
 const startButton = document.querySelector('.start-btn');
 const stopButton = document.querySelector('.stop-btn');
 const displayTime = document.querySelector('.time');
@@ -5,8 +8,12 @@ const hour = document.querySelector('.hour');
 const minute = document.querySelector('.minute');
 const second = document.querySelector('.second');
 const timerAlert = new Audio('sounds/Timer-Jingle.mp3');
+let progress = 0;
+let elapsed = 0;
 let interval;
-let totalSeconds = 0;
+let interval2;
+let initialTotalSeconds = 0;
+let totalSecondsLeft = 0;
 let hourValue = '';
 let minuteValue = '';
 let secondValue = '';
@@ -26,55 +33,132 @@ second.addEventListener('input', () => {
   second.value = second.value.replace(/[^0-9]/g, '').slice(0, 2);
 });
 
-startButton.addEventListener('click', () => {
+topButtonStart.addEventListener('click', () => {
+  if (!isCountingDown) {
+    fetchInput();
+    convertTotalSecondsLeft();
+    if (totalSecondsLeft > 0) {
+      buttonSwap();
+      countDown();
+      updateProgressAnimation();
+    }
+  } else {
+    buttonSwap();
+    countDown();
+    updateProgressAnimation();
+  }
+})
+
+topButtonPause.addEventListener('click', () => {
+  if (!isCountingDown && timerAlert.currentTime > 0) {
+    buttonSwap();
+    stopTimerAlert();
+    stopProgressAnimation();
+    return  
+  }
+  clearInterval(interval);
+  clearInterval(interval2);
   buttonSwap();
-  fetchInput();
-  convertToTotalSeconds();
-  countDown();
+  enableInput();
+  stopTimerAlert();
+})
+
+startButton.addEventListener('click', () => {
+  if (!isCountingDown && totalSecondsLeft === 0) {
+    fetchInput();
+    convertTotalSecondsLeft();
+    if (totalSecondsLeft > 0) {
+      buttonSwap();
+      countDown();
+      updateProgressAnimation();
+    }
+  } else {
+    buttonSwap();
+    countDown();
+    updateProgressAnimation();
+  }
 });
 
 stopButton.addEventListener('click', () => {
-  totalSeconds = 0;
+  isCountingDown = false;
+  totalSecondsLeft = 0;
   timerInitialization();
   clearInterval(interval);
   buttonSwap();
+  enableInput();
   stopTimerAlert();
+  stopProgressAnimation();
 });
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && isCountingDown === false) {
-    fetchInput();
-    convertToTotalSeconds();
-    if (totalSeconds > 0) {
+document.addEventListener('keydown', (e) => { 
+  if (e.key === ' ' && !isCountingDown) {
+    if (timerAlert.currentTime > 0) {
+      buttonSwap();
+      stopTimerAlert();
+      stopProgressAnimation();
+      return  
+    } else if (totalSecondsLeft > 0) {
       buttonSwap();
       countDown();
+      updateProgressAnimation();
+      console.log("It went here");
+    } else {
+      console.log("Else check");
+      fetchInput();
+      convertTotalSecondsLeft();
+      buttonSwap();
+      countDown();
+      updateProgressAnimation();
+    }
+  }
+
+  if (e.key == ' ' && isCountingDown) {
+    console.log("It went down here");
+    clearInterval(interval);
+    clearInterval(interval2);
+    buttonSwap();
+    enableInput();
+    stopTimerAlert();
+    isCountingDown = false;
+  }
+
+  if (e.key === 'Enter' && !isCountingDown) {
+    fetchInput();
+    convertTotalSecondsLeft();
+    if (totalSecondsLeft > 0) {
+      buttonSwap();
+      countDown();
+      updateProgressAnimation();
     }
   };
 
-  if (e.key === 'Escape' && isCountingDown === true) {
+  if (e.key === 'Escape' && isCountingDown) {
     isCountingDown = false;
-    totalSeconds = 0;
+    totalSecondsLeft = 0;
     timerInitialization();
     clearInterval(interval);
     enableInput();
     buttonSwap();
     stopTimerAlert();
+    stopProgressAnimation();
   }
 
-  if (e.key === 'Escape' && isCountingDown === false) {
+  if (e.key === 'Escape' && !isCountingDown && timerAlert.currentTime > 0) {
     buttonSwap();
     stopTimerAlert();
+    stopProgressAnimation();  
   }
 });
 
-function convertToTotalSeconds() {
-  totalSeconds = secondValue + (minuteValue * 60) + (hourValue * 3600);
+function convertTotalSecondsLeft() {
+  totalSecondsLeft = secondValue + (minuteValue * 60) + (hourValue * 3600);
+  initialTotalSeconds = totalSecondsLeft;
 };
 
-function timeConverter(totalSeconds) {
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
+function timeConverter(totalSecondsLeft) {
+  const hours = Math.floor(totalSecondsLeft / 3600);
+  const minutes = Math.floor((totalSecondsLeft % 3600) / 60);
+  const seconds = totalSecondsLeft % 60;
   return { 
     hours: hours.toString().padStart(2, '0'),
     minutes: minutes.toString().padStart(2, '0'),
@@ -84,19 +168,19 @@ function timeConverter(totalSeconds) {
 
 function countDown() {
   interval = setInterval(() => {
-    if (totalSeconds === 0) {
+    if (totalSecondsLeft === 0) {
       isCountingDown = false;
       clearInterval(interval);
       playTimerAlert();
       enableInput();
     } else {
       isCountingDown = true;
-      disableInput();
-      totalSeconds--;
-      const currentTime = timeConverter(totalSeconds); 
+      totalSecondsLeft--;
+      const currentTime = timeConverter(totalSecondsLeft); 
       hour.value = currentTime.hours;
       minute.value = currentTime.minutes;
       second.value = currentTime.seconds;
+      disableInput();
     }
   }, 1000);
 };
@@ -114,6 +198,8 @@ function fetchInput() {
 };
 
 function buttonSwap() {
+  topButtonStart.classList.toggle('hide');
+  topButtonPause.classList.toggle('hide');
   startButton.classList.toggle('hide');
   stopButton.classList.toggle('hide');
 };
@@ -122,19 +208,35 @@ function enableInput() {
   hour.disabled = false;
   minute.disabled = false;
   second.disabled = false;
-}
+};
 
 function disableInput() {
   hour.disabled = true;
   minute.disabled = true;
   second.disabled = true;
-}
+};
 
 function playTimerAlert() {
   timerAlert.play();
-}
+};
 
 function stopTimerAlert() {
   timerAlert.pause();
   timerAlert.currentTime = 0;
-}
+};
+
+function updateProgressAnimation() {
+  interval2 = setInterval(() => {
+    elapsed = initialTotalSeconds - totalSecondsLeft;
+    progress = (elapsed / initialTotalSeconds) * 100;
+    progressBar.style.setProperty('--progress', progress + "%");
+    if (totalSecondsLeft <= 0) {
+      clearInterval(interval2);
+    }
+  }, 1000);
+};
+
+function stopProgressAnimation() {
+  clearInterval(interval2);
+  progressBar.style.setProperty('--progress', "0%");
+};
