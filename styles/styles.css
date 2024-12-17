@@ -48,11 +48,16 @@ body {
   justify-content: space-evenly;
   align-items: center;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: transform 0.1s ease-in-out, background-color 0.3s ease;
 }
 
 .top-button:hover {
   transform: scale(1.1);
+  background-color: rgb(17, 255, 84);
+}
+
+.top-button:active {
+  transform: translate(0px, 1vh);
 }
 
 .knurling {
@@ -67,6 +72,42 @@ body {
   height: 3vh;
   width: 2vh;
   border: 1.5px solid black;
+  border-top: none;
+}
+
+.top-side-button {
+  top: 2.8vh;
+  right: 4vh;
+  transform: rotate(40deg);
+  position: absolute;
+  height: 3vh;
+  width: 7vh;
+  border: 2px solid black;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.1s ease-in-out, background-color 0.3s ease;
+}
+
+.top-side-button:hover {
+  transform: scale(1.1) rotate(40deg);
+  background-color: tomato;
+}
+
+.top-side-button:active {
+  transform: translate(-0.9vh, 1vh) rotate(40deg);
+}
+
+.stem-stop {
+  position: absolute;
+  top: 4.9vh;
+  right: 7.9vh;
+  transform: rotate(40deg);
+  height: 2vh;
+  width: 2vh;
+  border: 1.5px solid black;
+  border-top: none;
 }
 
 .outer-circle {
@@ -106,10 +147,6 @@ body {
   width: 25%;
   background: transparent;
   outline: none;
-}
-
-.time::placeholder {
-  color: black;
 }
 
 .time-separator {

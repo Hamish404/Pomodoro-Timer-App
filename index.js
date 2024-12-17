@@ -1,9 +1,11 @@
 const topButtonStart = document.querySelector('.top-button-start');
 const topButtonPause = document.querySelector('.top-button-stop');
+const topSideButtonStop = document.querySelector('.top-side-button');
 const progressBar = document.querySelector('.outer-circle');
 const startButton = document.querySelector('.start-btn');
 const stopButton = document.querySelector('.stop-btn');
 const displayTime = document.querySelector('.time');
+const timeSeparator = document.querySelectorAll('.time-separator');
 const hour = document.querySelector('.hour');
 const minute = document.querySelector('.minute');
 const second = document.querySelector('.second');
@@ -34,7 +36,7 @@ second.addEventListener('input', () => {
 });
 
 topButtonStart.addEventListener('click', () => {
-  if (!isCountingDown) {
+  if (!isCountingDown && totalSecondsLeft === 0) {
     fetchInput();
     convertTotalSecondsLeft();
     if (totalSecondsLeft > 0) {
@@ -59,8 +61,22 @@ topButtonPause.addEventListener('click', () => {
   clearInterval(interval);
   clearInterval(interval2);
   buttonSwap();
+  stopTimerAlert();
+  isCountingDown = false;
+})
+
+topSideButtonStop.addEventListener('click', () => {
+  if (totalSecondsLeft < 1) {
+    return
+  }
+  isCountingDown = false;
+  totalSecondsLeft = 0;
+  timerInitialization();
+  clearInterval(interval);
+  buttonSwap();
   enableInput();
   stopTimerAlert();
+  stopProgressAnimation();
 })
 
 startButton.addEventListener('click', () => {
@@ -101,23 +117,23 @@ document.addEventListener('keydown', (e) => {
       buttonSwap();
       countDown();
       updateProgressAnimation();
-      console.log("It went here");
     } else {
-      console.log("Else check");
       fetchInput();
       convertTotalSecondsLeft();
-      buttonSwap();
-      countDown();
-      updateProgressAnimation();
+      if (totalSecondsLeft < 1) {
+        return
+      } else {
+        buttonSwap();
+        countDown();
+        updateProgressAnimation();
+      }
     }
   }
 
   if (e.key == ' ' && isCountingDown) {
-    console.log("It went down here");
     clearInterval(interval);
     clearInterval(interval2);
     buttonSwap();
-    enableInput();
     stopTimerAlert();
     isCountingDown = false;
   }
@@ -205,12 +221,14 @@ function buttonSwap() {
 };
 
 function enableInput() {
+  changeSeparatorColor('black');
   hour.disabled = false;
   minute.disabled = false;
   second.disabled = false;
 };
 
 function disableInput() {
+  changeSeparatorColor('#545454');
   hour.disabled = true;
   minute.disabled = true;
   second.disabled = true;
@@ -240,3 +258,7 @@ function stopProgressAnimation() {
   clearInterval(interval2);
   progressBar.style.setProperty('--progress', "0%");
 };
+
+const changeSeparatorColor = (color) => timeSeparator.forEach((separator) => {
+  separator.style.color = color;
+})
