@@ -181,4 +181,26 @@ body {
   display: none;
 }
 
+@media (max-width: 768px) {
+  .stem-stop {
+    top: 3.5vh;
+    right: 6.4vh;
+  }
 
+  .top-side-button {
+    top: 1.2vh;
+    right: 2.4vh;
+  }
+
+  .outer-circle {
+    height: 45vh;
+  } 
+
+  .time, .time-separator {
+    font-size: 6rem;
+  }
+
+  .btn {
+    font-size: 4rem;   
+  }
+}
