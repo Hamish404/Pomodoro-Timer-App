@@ -182,6 +182,10 @@ body {
 }
 
 @media (max-width: 768px) {
+  .container {
+    height: 70%;
+  }
+
   .stem-stop {
     top: 3.5vh;
     right: 6.4vh;
@@ -197,10 +201,11 @@ body {
   } 
 
   .time, .time-separator {
-    font-size: 6rem;
+    font-size: 4rem;
   }
 
   .btn {
-    font-size: 4rem;   
+    font-size: 3rem;
+    height: 50%;   
   }
 }
