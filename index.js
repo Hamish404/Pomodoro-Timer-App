@@ -114,7 +114,6 @@ document.addEventListener('keydown', (e) => {
       stopProgressAnimation();
       return  
     } else if (totalSecondsLeft > 0) {
-      isCountingDown = true;
       buttonSwap();
       countDown();
       updateProgressAnimation();
@@ -201,11 +200,19 @@ function countDown() {
     const currentTime = Date.now();
     totalSecondsLeft = Math.round((endTime - currentTime) / 1000);
 
+    const currentTimeFormatted = timeConverter(totalSecondsLeft);
+    if (currentTimeFormatted.hours === '00') {
+      document.title = `${currentTimeFormatted.minutes}:${currentTimeFormatted.seconds}`;
+    } else {
+      document.title = `${currentTimeFormatted.hours}:${currentTimeFormatted.minutes}:${currentTimeFormatted.seconds}`
+    }
+
     updateTimerDisplay(totalSecondsLeft);
 
     if (totalSecondsLeft <= 0) {
       totalSecondsLeft = 0;
       isCountingDown = false;
+      document.title = 'Timer Finished!';
       clearInterval(interval);
       playTimerAlert();
       enableInput();
@@ -262,6 +269,7 @@ function playTimerAlert() {
 };
 
 function stopTimerAlert() {
+  document.title = '';
   timerAlert.pause();
   timerAlert.currentTime = 0;
 };
