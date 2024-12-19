@@ -139,7 +139,7 @@ body {
 }
 
 .time, .time-separator {
-  font-size: 8rem;
+  font-size: 10vh;
   text-align: center;
 }
 
