@@ -114,6 +114,7 @@ document.addEventListener('keydown', (e) => {
       stopProgressAnimation();
       return  
     } else if (totalSecondsLeft > 0) {
+      isCountingDown = true;
       buttonSwap();
       countDown();
       updateProgressAnimation();
@@ -159,6 +160,16 @@ document.addEventListener('keydown', (e) => {
     stopProgressAnimation();
   }
 
+  if (e.key === 'Escape' && !isCountingDown) {
+    isCountingDown = false;
+    totalSecondsLeft = 0;
+    timerInitialization();
+    clearInterval(interval);
+    enableInput();
+    stopTimerAlert();
+    stopProgressAnimation();
+  }
+
   if (e.key === 'Escape' && !isCountingDown && timerAlert.currentTime > 0) {
     buttonSwap();
     stopTimerAlert();
@@ -183,23 +194,35 @@ function timeConverter(totalSecondsLeft) {
 };
 
 function countDown() {
+  const startTime = Date.now();
+  const endTime = startTime + totalSecondsLeft * 1000;
+  
   interval = setInterval(() => {
-    if (totalSecondsLeft === 0) {
+    const currentTime = Date.now();
+    totalSecondsLeft = Math.round((endTime - currentTime) / 1000);
+
+    updateTimerDisplay(totalSecondsLeft);
+
+    if (totalSecondsLeft <= 0) {
+      totalSecondsLeft = 0;
       isCountingDown = false;
       clearInterval(interval);
       playTimerAlert();
       enableInput();
     } else {
       isCountingDown = true;
-      totalSecondsLeft--;
-      const currentTime = timeConverter(totalSecondsLeft); 
-      hour.value = currentTime.hours;
-      minute.value = currentTime.minutes;
-      second.value = currentTime.seconds;
       disableInput();
+      updateTimerDisplay(totalSecondsLeft);
     }
   }, 1000);
 };
+
+function updateTimerDisplay(secondsLeft) {
+  const currentTimeFormatted = timeConverter(secondsLeft);
+  hour.value = currentTimeFormatted.hours;
+  minute.value = currentTimeFormatted.minutes;
+  second.value = currentTimeFormatted.seconds;
+}
 
 function timerInitialization() {
   hour.value = '00';
